@@ -13,7 +13,7 @@ router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/'); // می‌تونی به داشبورد هدایت کنی
+    res.redirect('/'); // Redirect to homepage or dashboard after successful login
   }
 );
 
