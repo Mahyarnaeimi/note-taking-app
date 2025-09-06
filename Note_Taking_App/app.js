@@ -11,7 +11,8 @@ import { fileURLToPath } from 'url';
 
 import postsRouter from './routes/post.js';
 import authRouter from './routes/auth.js';
-import { passport } from './config/passport.js';
+import configurePassport from './config/passport.js';
+
 
 // Passport configuration
 const __filename = fileURLToPath(import.meta.url);
