@@ -1,9 +1,9 @@
-// seeder.js
+// seed.js
 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Note from './models/Note.js';
-import User from './models/User.js';
+import Note from './note.js';
+import User from './user.js';
 
 dotenv.config();
 
