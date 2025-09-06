@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 
 import postsRouter from './routes/post.js';
 import authRouter from './routes/auth.js';
-import { configurePassport } from './config/passport.js';
+import { passport } from './config/passport.js';
 
 // برای درست کردن __dirname توی ESM
 const __filename = fileURLToPath(import.meta.url);
