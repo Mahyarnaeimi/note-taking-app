@@ -1,3 +1,6 @@
+// Note_Taking_App/models/note.js
+// Note model definition
+
 import mongoose from "mongoose";
 
 const noteSchema = new mongoose.Schema({

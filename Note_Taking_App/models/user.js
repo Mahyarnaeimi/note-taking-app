@@ -1,3 +1,6 @@
+// Note_Taking_App/models/user.js
+// User model definition
+
 import { Mongoose } from "mongoose";
 
 const userSchema = new Mongoose.Schema({
@@ -9,4 +12,3 @@ const userSchema = new Mongoose.Schema({
 const User = Mongoose.model("User", userSchema);
 
 export default User;
-    
