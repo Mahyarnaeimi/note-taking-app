@@ -6,7 +6,8 @@
   <title>Register</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  <%- include('partials/header', { user }) %>
   <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
     <h2 class="text-xl font-semibold mb-4">Register</h2>
 
@@ -32,5 +33,6 @@
       <a href="/" class="text-blue-600 hover:underline">Login</a>
     </p>
   </div>
+  <%- include('partials/footer') %>
 </body>
 </html>
