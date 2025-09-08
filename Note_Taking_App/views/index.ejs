@@ -1,38 +1,46 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Note Taking App</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<body class="bg-gray-100">
-  <nav class="p-4">
-    <% if (user) { %>
-      Hello! <%= user.displayName %> — <a href="/auth/logout">Logout</a>
-    <% } else { %>
-      <a href="/auth/google" class="px-3 py-2 bg-blue-600 text-white rounded">Login with Google</a>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+    <% if (error) { %>
+      <p class="text-red-500 mb-4"><%= error %></p>
     <% } %>
-  </nav>
 
-  <main class="p-6">
-    <div id="notes">Loading...</div>
-  </main>
+    <% if (user) { %>
+      <p class="mb-4">Hello, <%= user.displayName || user.email %>!</p>
+      <a href="/auth/logout" class="px-4 py-2 bg-red-600 text-white rounded-lg">Logout</a>
+    <% } else { %>
+      <!-- Google login -->
+      <a href="/auth/google"
+        class="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg mb-4">
+        Login with Google
+      </a>
 
-  <script>
-    async function loadNotes(){
-      const res = await fetch('/posts', { credentials: 'include' });
-      if(res.status === 401){
-        document.getElementById('notes').innerHTML = 'Please log in.';
-        return;
-      }
-      const notes = await res.json();
-      document.getElementById('notes').innerHTML = notes.map(n => `<div class="p-2 border mb-2"><h3>${n.title}</h3><p>${n.content}</p></div>`).join('');
-    }
-    loadNotes();
-  </script>
+      <hr class="my-4">
+
+      <!-- Local login -->
+      <form action="/auth/login" method="POST" class="space-y-4">
+        <input type="email" name="email" placeholder="Email" required
+          class="w-full px-3 py-2 border rounded-lg">
+        <input type="password" name="password" placeholder="Password" required
+          class="w-full px-3 py-2 border rounded-lg">
+        <button type="submit"
+          class="w-full px-4 py-2 bg-green-600 text-white rounded-lg">
+          Login
+        </button>
+      </form>
+
+      <div class="mt-4 text-sm text-center">
+        <a href="/auth/register" class="text-blue-600 hover:underline">Register</a> |
+        <a href="/auth/forgot-password" class="text-blue-600 hover:underline">Forgot Password?</a>
+      </div>
+    <% } %>
+  </div>
 </body>
-
 </html>

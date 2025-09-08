@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <nav class="p-4 bg-white shadow">
+    <div class="flex justify-between items-center">
+      <span>Welcome, <%= user.displayName || user.email %></span>
+      <a href="/auth/logout" class="px-3 py-2 bg-red-600 text-white rounded">Logout</a>
+    </div>
+  </nav>
+
+  <main class="p-6">
+    <h1 class="text-2xl font-bold mb-4">Your Notes</h1>
+    <div id="notes">Loading...</div>
+  </main>
+
+  <script>
+    async function loadNotes(){
+      const res = await fetch('/posts', { credentials: 'include' });
+      if(res.status === 401){
+        document.getElementById('notes').innerHTML = 'Please log in.';
+        return;
+      }
+      const notes = await res.json();
+      document.getElementById('notes').innerHTML =
+        notes.map(n => `<div class="p-2 border mb-2"><h3>${n.title}</h3><p>${n.content}</p></div>`).join('');
+    }
+    loadNotes();
+  </script>
+</body>
+</html>
