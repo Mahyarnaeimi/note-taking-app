@@ -1,25 +1,27 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Note Taking App</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col">
   <%- include('partials/header', { user }) %>
-  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-    <% if (error) { %>
+  <div class="flex justify-center bg-gray-100 pt-24 pb-12">
+    <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md mt-24">
+      <% if (error) { %>
       <p class="text-red-500 mb-4"><%= error %></p>
-    <% } %>
+      <% } %>
 
-    <% if (user) { %>
+      <% if (user) { %>
       <p class="mb-4">Hello, <%= user.displayName || user.email %>!</p>
       <a href="/auth/logout" class="px-4 py-2 bg-red-600 text-white rounded-lg">Logout</a>
-    <% } else { %>
+      <% } else { %>
       <!-- Google login -->
-      <a href="/auth/google"
-        class="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg mb-4">
+      <a href="/auth/google" class="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg mb-4">
         Login with Google
       </a>
 
@@ -27,22 +29,22 @@
 
       <!-- Local login -->
       <form action="/auth/login" method="POST" class="space-y-4">
-        <input type="email" name="email" placeholder="Email" required
-          class="w-full px-3 py-2 border rounded-lg">
+        <input type="email" name="email" placeholder="Email" required class="w-full px-3 py-2 border rounded-lg">
         <input type="password" name="password" placeholder="Password" required
           class="w-full px-3 py-2 border rounded-lg">
-        <button type="submit"
-          class="w-full px-4 py-2 bg-green-600 text-white rounded-lg">
+        <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg">
           Login
         </button>
       </form>
 
       <div class="mt-4 text-sm text-center">
-        <a href="/auth/register" class="text-blue-600 hover:underline">Register</a> 
+        <a href="/auth/register" class="text-blue-600 hover:underline">Register</a>
         <a href="/auth/forgot-password" class="text-blue-600 hover:underline">Forgot Password?</a>
       </div>
-    <% } %>
+      <% } %>
+    </div>
   </div>
   <%- include('partials/footer') %>
 </body>
+
 </html>
