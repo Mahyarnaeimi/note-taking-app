@@ -72,4 +72,27 @@ router.delete(
   })
 );
 
+// Star a note
+router.post(
+  '/:id/star',
+  ensureAuth,
+  asyncHandler(async (req, res) => {
+    const { stars } = req.body;
+
+    if (stars < 0 || stars > 5) {
+      return res.status(400).json({ message: 'Stars must be between 0 and 5' });
+    }
+
+    const note = await Note.findOneAndUpdate(
+      { _id: req.params.id, owner: req.user._id },
+      { stars },
+      { new: true, runValidators: true }
+    );
+
+    if (!note) return res.status(404).json({ message: 'Note not found' });
+
+    res.json(note);
+  })
+);
+
 export default router;

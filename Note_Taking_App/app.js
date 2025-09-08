@@ -12,6 +12,8 @@ import postsRouter from './routes/post.js';
 import authRouter from './routes/auth.js';
 import configurePassport from './config/passport.js';
 import { notFound, errorHandler } from './middlewares/error.js';
+import { ensureAuth } from './middlewares/auth.js';
+import Note from './models/note.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,6 +61,15 @@ app.get('/', (req, res) => {
     user: req.user || null,
     error: req.query.error || null
   });
+});
+
+app.get('/dashboard', ensureAuth, async (req, res, next) => {
+  try {
+    const notes = await Note.find({ owner: req.user._id }).sort({ stars: -1, createdAt: -1 });
+    res.render('dashboard', { user: req.user, notes });
+  } catch (err) {
+    next(err); // بره توی errorHandler
+  }
 });
 
 // error handlers
