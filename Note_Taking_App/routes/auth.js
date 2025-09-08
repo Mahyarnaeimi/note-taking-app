@@ -28,6 +28,11 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+// register page
+router.get("/register", (req, res) => {
+  res.render("register", { error: req.query.error || null });
+});
+
 
 // register
 router.post("/register", async (req, res, next) => {
@@ -44,9 +49,23 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
+// forgot password page
+router.get("/forgot-password", (req, res) => {
+  res.render("forgot-password", { error: req.query.error || null, message: null });
+});
+
 // forget password
 router.post("/forgot-password", async (req, res) => {
-  res.render("forgot-password");
+  const { email } = req.body;
+
+  // بررسی ایمیل در دیتابیس (در اینجا فقط نمایش پیام می‌دهیم)
+  const user = await User.findOne({ email });
+
+  // پیام عمومی برای همه
+  const message = "a reset link has been sent to your email address.";
+
+  // نمایش مجدد فرم با پیام
+  res.render("forgot-password", { message });
 });
 
 // Login with Google
