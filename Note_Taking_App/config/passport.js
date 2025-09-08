@@ -1,12 +1,8 @@
-// config/passport.js   
-
-import GoogleStrategy from 'passport-google-oauth20';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/user.js';
 
-// Configure Passport to use Google OAuth 2.0
 export default function(passport) {
-
-   passport.use(new GoogleStrategy({
+  passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL
@@ -14,11 +10,13 @@ export default function(passport) {
     try {
       let user = await User.findOne({ googleId: profile.id });
       if (user) return done(null, user);
+
       user = await User.create({
         googleId: profile.id,
         displayName: profile.displayName,
-        email: profile.emails?.[0]?.value
+        email: profile.emails?.[0]?.value || `noemail-${profile.id}@google.com` // fallback
       });
+
       done(null, user);
     } catch (err) {
       done(err, null);

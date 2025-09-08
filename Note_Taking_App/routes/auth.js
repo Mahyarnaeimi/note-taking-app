@@ -11,7 +11,7 @@ const router = Router();
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
     if (!user || !user.password) {
       return res.redirect("/?error=Invalid credentials");
     }
@@ -21,32 +21,27 @@ router.post("/login", async (req, res, next) => {
     }
     req.login(user, (err) => {
       if (err) return next(err);
-      return res.redirect('/'); // Redirect to homepage or dashboard after successful login
+      return res.redirect('/'); 
     });
   } catch (error) {
     next(error);
-  } 
+  }
 });
 
 
 // register
-router.post("/register", async (req, res) => {
-  res.render("register");
-});
-
 router.post("/register", async (req, res, next) => {
   const { email, password, displayName } = req.body;
   try {
     const hash = await bcrypt.hash(password, 12);
     const user = await User.create({ email, password: hash, displayName });
     req.login(user, (err) => {
-      if (err) throw err;
-      return res.redirect('/'); // Redirect to homepage or dashboard after successful registration
+      if (err) return next(err);
+      return res.redirect('/');
     });
   } catch (error) {
-    res.redirect("/register?error=User already exists");
+    return res.redirect("/register?error=User already exists");
   }
-  next(error);
 });
 
 // forget password

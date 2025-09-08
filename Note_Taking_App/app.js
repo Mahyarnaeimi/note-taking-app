@@ -1,4 +1,3 @@
-// app.js
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -12,16 +11,13 @@ import { fileURLToPath } from 'url';
 import postsRouter from './routes/post.js';
 import authRouter from './routes/auth.js';
 import configurePassport from './config/passport.js';
+import { notFound, errorHandler } from './middlewares/error.js';
 
-
-// Passport configuration
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// env
 dotenv.config();
 
-// app
 const app = express();
 
 // middleware
@@ -59,14 +55,25 @@ app.use('/posts', postsRouter);
 app.use('/auth', authRouter);
 
 app.get('/', (req, res) => {
-  res.render('index', { user: req.user || null });
+  res.render('index', { 
+    user: req.user || null,
+    error: req.query.error || null
+  });
 });
+
+// error handlers
+app.use(notFound);
+app.use(errorHandler);
 
 // DB connect & server start
 const PORT = process.env.PORT || 5000;
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
-    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+    console.log('✅ MongoDB connected');
+    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
   })
   .catch((err) => console.error(err));

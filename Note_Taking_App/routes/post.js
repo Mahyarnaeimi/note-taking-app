@@ -22,6 +22,9 @@ router.post(
   ensureAuth,
   asyncHandler(async (req, res) => {
     const { title, content } = req.body;
+    if (!title || !content) {
+      return res.status(400).json({ message: 'Title and content are required' });
+    }
     const note = await Note.create({ title, content, owner: req.user._id });
     res.status(201).json(note);
   })
@@ -44,9 +47,13 @@ router.put(
   '/:id',
   ensureAuth,
   asyncHandler(async (req, res) => {
+    const { title, content } = req.body;
+    if (!title || !content) {
+      return res.status(400).json({ message: 'Title and content are required' });
+    }
     const note = await Note.findOneAndUpdate(
       { _id: req.params.id, owner: req.user._id },
-      req.body,
+      { title, content },
       { new: true, runValidators: true }
     );
     if (!note) return res.status(404).json({ message: 'Not found' });

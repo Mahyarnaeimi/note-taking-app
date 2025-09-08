@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Note from './note.js';
 import User from './user.js';
+import bcrypt from 'bcryptjs';
 
 dotenv.config();
 
@@ -17,20 +18,35 @@ const seed = async () => {
     await User.deleteMany();
 
     // create test user
+
+
+    // create test user
+    const hash = await bcrypt.hash('123456', 12);
     const user = await User.create({
-      username: 'testuser',
       email: 'test@example.com',
-      password: '123456', // In production, passwords should be hashed
+      password: hash,
+      displayName: 'Test User'
     });
 
+
     // create multiple notes
-    const notes = await Note.insertMany([
-      { title: 'First Note', content: 'This is my first note.', owner: user._id },
-      { title: 'Second Note', content: 'This is my second note.', owner: user._id },
+    const notes = await Note.insertMany([{
+        title: 'First Note',
+        content: 'This is my first note.',
+        owner: user._id
+      },
+      {
+        title: 'Second Note',
+        content: 'This is my second note.',
+        owner: user._id
+      },
     ]);
 
     console.log('🌱 Seeding done!');
-    console.log({ user, notes });
+    console.log({
+      user,
+      notes
+    });
 
     process.exit(0);
   } catch (err) {
