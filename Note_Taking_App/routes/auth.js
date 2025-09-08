@@ -35,7 +35,7 @@ router.post('/login', async (req, res, next) => {
  * Register Page
  */
 router.get('/register', (req, res) => {
-  res.render('register', { error: req.query.error || null });
+  res.render('register', { error: req.query.error || null, user: req.user || null });
 });
 
 /**
@@ -68,7 +68,7 @@ router.post('/register', async (req, res, next) => {
 router.get('/forgot-password', (req, res) => {
   res.render('forgot-password', {
     error: req.query.error || null,
-    message: null,
+    message: null, user: req.user || null 
   });
 });
 
