@@ -1,21 +1,26 @@
+// dashboard.ejs
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard | Note-Taker</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/x-icon" href="/image/favicon.ico">
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <%- include('partials/header', { user }) %>
+  <%- include('partials/header') %>
 
   <!-- Main Container -->
   <main class="flex flex-1 p-6 gap-6 md:gap-8">
-    
+
     <!-- Sidebar / Notes List -->
     <aside class="w-full md:w-1/3 lg:w-1/4 bg-white p-4 rounded-md shadow-xl flex flex-col">
-      
+
       <!-- Search bar -->
       <input type="text" id="search-notes"
         class="w-full mb-4 px-2 py-1 border border-gray-300 rounded-md focus:ring focus:ring-blue-500"
@@ -23,31 +28,33 @@
 
       <!-- Notes by stars -->
       <div id="notes-groups" class="flex-1 overflow-y-auto space-y-4">
-        <% [5,4,3,2,1].forEach(star => { %>
-          <div>
-            <h3 class="text-lg font-semibold mb-2"><%= star %> ★ Notes</h3>
-            <ul id="notes-list-<%= star %>" class="space-y-2">
-              <% notes.filter(n => n.stars === star).forEach(note => { %>
-                <li class="p-2 bg-gray-100 rounded-md flex justify-between items-center cursor-pointer hover:bg-gray-200">
-                  <span class="note-title"><%= note.title %></span>
-                  <div class="flex items-center space-x-2">
-                    <!-- stars -->
-                    <button class="text-yellow-500 hover:text-yellow-600" data-id="<%= note._id %>" data-action="star">★</button>
-                    <!-- edit -->
-                    <button class="text-blue-600 hover:text-blue-700" data-id="<%= note._id %>" data-action="edit">✎</button>
-                    <!-- delete -->
-                    <button class="text-red-600 hover:text-red-700" data-id="<%= note._id %>" data-action="delete">🗑</button>
-                  </div>
-                </li>
-              <% }) %>
-            </ul>
-          </div>
+        <% [5,4,3,2,1,0].forEach(star => { %>
+        <div>
+          <h3 class="text-lg font-semibold mb-2"><%= star %> ★ Notes</h3>
+          <ul id="notes-list-<%= star %>" class="space-y-2">
+            <% notes.filter(n => n.stars === star).forEach(note => { %>
+            <li class="p-2 bg-gray-100 rounded-md flex justify-between items-center cursor-pointer hover:bg-gray-200">
+              <span class="note-title"><%= note.title %></span>
+              <div class="flex items-center space-x-2">
+                <!-- stars -->
+                <button class="text-yellow-500 hover:text-yellow-600" data-id="<%= note._id %>"
+                  data-action="star">★</button>
+                <!-- edit -->
+                <button class="text-blue-600 hover:text-blue-700" data-id="<%= note._id %>"
+                  data-action="edit">✎</button>
+                <!-- delete -->
+                <button class="text-red-600 hover:text-red-700" data-id="<%= note._id %>"
+                  data-action="delete">🗑</button>
+              </div>
+            </li>
+            <% }) %>
+          </ul>
+        </div>
         <% }) %>
       </div>
 
       <!-- Add new note -->
-      <button id="new-note-btn"
-        class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+      <button id="new-note-btn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
         + Add Note
       </button>
     </aside>
@@ -62,12 +69,84 @@
 
       <div class="mt-4 flex justify-end space-x-2">
         <button id="delete-note-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Delete</button>
-        <button id="update-note-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Update</button>
+        <button id="update-note-btn"
+          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Update</button>
         <button id="save-note-btn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Save</button>
       </div>
     </section>
   </main>
 
   <%- include('partials/footer') %>
+
+  <script>
+    let currentNoteId = null;
+
+    // Save new note
+    document.getElementById('save-note-btn').addEventListener('click', async () => {
+      const title = document.getElementById('note-title').value;
+      const content = document.getElementById('note-content').value;
+
+      const res = await fetch('/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      });
+      if (res.ok) location.reload();
+    });
+
+    // Update note
+    document.getElementById('update-note-btn').addEventListener('click', async () => {
+      if (!currentNoteId) return alert('Select a note first');
+      const title = document.getElementById('note-title').value;
+      const content = document.getElementById('note-content').value;
+
+      const res = await fetch(`/posts/${currentNoteId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      });
+      if (res.ok) location.reload();
+    });
+
+    // Delete note
+    document.getElementById('delete-note-btn').addEventListener('click', async () => {
+      if (!currentNoteId) return alert('Select a note first');
+      const res = await fetch(`/posts/${currentNoteId}`, { method: 'DELETE' });
+      if (res.ok) location.reload();
+    });
+
+    // Edit mode
+    document.querySelectorAll('[data-action="edit"]').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.dataset.id;
+        const res = await fetch(`/posts/${id}`);
+        const note = await res.json();
+
+        currentNoteId = id;
+        document.getElementById('note-title').value = note.title;
+        document.getElementById('note-content').value = note.content;
+      });
+    });
+
+    // Search notes
+    document.getElementById('search-notes').addEventListener('input', async (e) => {
+      const q = e.target.value;
+      const res = await fetch(`/posts/search?q=${encodeURIComponent(q)}`);
+      const results = await res.json();
+
+      const list = document.getElementById('notes-groups');
+      list.innerHTML = '';
+      results.forEach(n => {
+        list.innerHTML += `<div class="p-2 bg-gray-100 rounded-md mb-2">${n.title}</div>`;
+      });
+    });
+
+    // Add new note
+    document.getElementById('new-note-btn').addEventListener('click', () => {
+      currentNoteId = null;
+      document.getElementById('note-title').value = '';
+      document.getElementById('note-content').value = '';
+    });
+  </script>
 </body>
 </html>

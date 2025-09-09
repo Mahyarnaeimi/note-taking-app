@@ -16,6 +16,22 @@ router.get(
   })
 );
 
+// Search notes by title/content
+router.get(
+  '/search',
+  ensureAuth,
+  asyncHandler(async (req, res) => {
+    const q = req.query.q || '';
+    const regex = new RegExp(q, 'i'); // case-insensitive
+    const notes = await Note.find({
+      owner: req.user._id,
+      $or: [{ title: regex }, { content: regex }]
+    }).sort({ stars: -1, createdAt: -1 });
+
+    res.json(notes);
+  })
+);
+
 // Create new note
 router.post(
   '/',
