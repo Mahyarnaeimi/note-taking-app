@@ -111,4 +111,30 @@ router.post(
   })
 );
 
+
+// Get all notes with optional filters
+router.get(
+  '/',
+  ensureAuth,
+  asyncHandler(async (req, res) => {
+    const { filter } = req.query;
+    let query = { owner: req.user._id };
+    let sort = { createdAt: -1 }; // پیش‌فرض: جدیدترین اول
+
+    if (filter === 'oldest') {
+      sort = { createdAt: 1 }; // قدیمی‌ترین اول
+    } else if (filter === 'starred') {
+      query.stars = { $gt: 0 }; // فقط ستاره‌دارها
+      sort = { stars: -1, createdAt: -1 }; // مرتب بر اساس تعداد ستاره، بعد تاریخ
+    } else if (filter === 'unstarred') {
+      query.stars = 0; // فقط بدون ستاره
+      sort = { createdAt: -1 }; // مرتب بر اساس تاریخ (جدیدترین اول)
+    }
+
+    const notes = await Note.find(query).sort(sort);
+    res.json(notes);
+  })
+);
+
+
 export default router;

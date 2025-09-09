@@ -1,5 +1,3 @@
-// dashboard.ejs
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,32 +24,39 @@
         class="w-full mb-4 px-2 py-1 border border-gray-300 rounded-md focus:ring focus:ring-blue-500"
         placeholder="Search notes..." />
 
-      <!-- Notes by stars -->
-      <div id="notes-groups" class="flex-1 overflow-y-auto space-y-4">
-        <% [5,4,3,2,1,0].forEach(star => { %>
-        <div>
-          <h3 class="text-lg font-semibold mb-2"><%= star %> ★ Notes</h3>
-          <ul id="notes-list-<%= star %>" class="space-y-2">
-            <% notes.filter(n => n.stars === star).forEach(note => { %>
-            <li class="p-2 bg-gray-100 rounded-md flex justify-between items-center cursor-pointer hover:bg-gray-200">
-              <span class="note-title"><%= note.title %></span>
-              <div class="flex items-center space-x-2">
-                <!-- stars -->
-                <button class="text-yellow-500 hover:text-yellow-600" data-id="<%= note._id %>"
-                  data-action="star">★</button>
-                <!-- edit -->
-                <button class="text-blue-600 hover:text-blue-700" data-id="<%= note._id %>"
-                  data-action="edit">✎</button>
-                <!-- delete -->
-                <button class="text-red-600 hover:text-red-700" data-id="<%= note._id %>"
-                  data-action="delete">🗑</button>
-              </div>
-            </li>
-            <% }) %>
-          </ul>
-        </div>
+      <!-- Filter dropdown -->
+      <select id="filter-notes"
+        class="mb-4 px-2 py-1 border border-gray-300 rounded-md focus:ring focus:ring-blue-500">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="starred">Starred only</option>
+        <option value="unstarred">Unstarred only</option>
+      </select>
+
+      <!-- Notes list -->
+      <ul id="notes-list" class="flex-1 overflow-y-auto space-y-2">
+        <% notes.forEach(note => { %>
+        <li class="p-2 bg-gray-100 rounded-md flex justify-between items-center cursor-pointer hover:bg-gray-200"
+          data-id="<%= note._id %>">
+          <span class="note-title"><%= note.title %></span>
+          <div class="flex items-center space-x-2">
+            <!-- star rating -->
+            <div class="flex space-x-1" data-action="star" data-id="<%= note._id %>">
+              <% for (let i = 1; i <= 5; i++) { %>
+                <span class="star <%= i <= note.stars ? 'text-yellow-500' : 'text-gray-300' %> cursor-pointer"
+                  data-star="<%= i %>">★</span>
+              <% } %>
+            </div>
+            <!-- edit -->
+            <button class="text-blue-600 hover:text-blue-700" data-id="<%= note._id %>"
+              data-action="edit">✎</button>
+            <!-- delete -->
+            <button class="text-red-600 hover:text-red-700" data-id="<%= note._id %>"
+              data-action="delete">🗑</button>
+          </div>
+        </li>
         <% }) %>
-      </div>
+      </ul>
 
       <!-- Add new note -->
       <button id="new-note-btn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
@@ -81,10 +86,40 @@
   <script>
     let currentNoteId = null;
 
+    // Helper: Fetch notes with filters
+    async function fetchNotes(params = {}) {
+      const query = new URLSearchParams(params).toString();
+      const res = await fetch(`/posts?${query}`);
+      return res.json();
+    }
+
+    // Render notes into sidebar
+    function renderNotes(notes) {
+      const list = document.getElementById('notes-list');
+      list.innerHTML = '';
+      notes.forEach(note => {
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+          starsHtml += `<span class="star ${i <= note.stars ? 'text-yellow-500' : 'text-gray-300'} cursor-pointer" data-star="${i}">★</span>`;
+        }
+
+        list.innerHTML += `
+          <li class="p-2 bg-gray-100 rounded-md flex justify-between items-center cursor-pointer hover:bg-gray-200" data-id="${note._id}">
+            <span class="note-title">${note.title}</span>
+            <div class="flex items-center space-x-2">
+              <div class="flex space-x-1" data-action="star" data-id="${note._id}">${starsHtml}</div>
+              <button class="text-blue-600 hover:text-blue-700" data-id="${note._id}" data-action="edit">✎</button>
+              <button class="text-red-600 hover:text-red-700" data-id="${note._id}" data-action="delete">🗑</button>
+            </div>
+          </li>`;
+      });
+    }
+
     // Save new note
     document.getElementById('save-note-btn').addEventListener('click', async () => {
       const title = document.getElementById('note-title').value;
       const content = document.getElementById('note-content').value;
+      if (!title || !content) return alert('Please fill both fields');
 
       const res = await fetch('/posts', {
         method: 'POST',
@@ -115,30 +150,18 @@
       if (res.ok) location.reload();
     });
 
-    // Edit mode
-    document.querySelectorAll('[data-action="edit"]').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const id = e.target.dataset.id;
-        const res = await fetch(`/posts/${id}`);
-        const note = await res.json();
-
-        currentNoteId = id;
-        document.getElementById('note-title').value = note.title;
-        document.getElementById('note-content').value = note.content;
-      });
+    // Filter dropdown
+    document.getElementById('filter-notes').addEventListener('change', async (e) => {
+      const filter = e.target.value;
+      const notes = await fetchNotes({ filter });
+      renderNotes(notes);
     });
 
-    // Search notes
+    // Search
     document.getElementById('search-notes').addEventListener('input', async (e) => {
       const q = e.target.value;
-      const res = await fetch(`/posts/search?q=${encodeURIComponent(q)}`);
-      const results = await res.json();
-
-      const list = document.getElementById('notes-groups');
-      list.innerHTML = '';
-      results.forEach(n => {
-        list.innerHTML += `<div class="p-2 bg-gray-100 rounded-md mb-2">${n.title}</div>`;
-      });
+      const notes = await fetch(`/posts/search?q=${encodeURIComponent(q)}`).then(r => r.json());
+      renderNotes(notes);
     });
 
     // Add new note
@@ -146,6 +169,40 @@
       currentNoteId = null;
       document.getElementById('note-title').value = '';
       document.getElementById('note-content').value = '';
+    });
+
+    // Delegated event handling for Edit / Star / Delete
+    document.getElementById('notes-list').addEventListener('click', async (e) => {
+      const action = e.target.dataset.action;
+      const id = e.target.dataset.id;
+
+      // Edit note
+      if (action === 'edit') {
+        const note = await fetch(`/posts/${id}`).then(r => r.json());
+        currentNoteId = id;
+        document.getElementById('note-title').value = note.title;
+        document.getElementById('note-content').value = note.content;
+      }
+
+      // Delete note
+      if (action === 'delete') {
+        const res = await fetch(`/posts/${id}`, { method: 'DELETE' });
+        if (res.ok) location.reload();
+      }
+
+      // Star rating
+      if (e.target.classList.contains('star')) {
+        const parent = e.target.closest('[data-action="star"]');
+        const noteId = parent.dataset.id;
+        const stars = parseInt(e.target.dataset.star);
+
+        await fetch(`/posts/${noteId}/star`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ stars })
+        });
+        location.reload();
+      }
     });
   </script>
 </body>
