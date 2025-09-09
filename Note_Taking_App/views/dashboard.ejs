@@ -14,19 +14,20 @@
   <%- include('partials/header') %>
 
   <!-- Main Container -->
-  <main class="flex flex-1 p-6 gap-6 md:gap-8">
+  <main class="flex flex-1 flex-col md:flex-row p-4 md:p-6 gap-4 md:gap-8">
 
-    <!-- Sidebar / Notes List -->
-    <aside class="w-full md:w-1/3 lg:w-1/4 bg-white p-4 rounded-md shadow-xl flex flex-col">
+    <!-- Sidebar -->
+    <aside id="sidebar"
+      class="hidden md:flex w-full md:w-1/3 lg:w-1/4 bg-white p-4 rounded-md shadow-xl flex-col">
 
-      <!-- Search bar -->
+      <!-- Search -->
       <input type="text" id="search-notes"
-        class="w-full mb-4 px-2 py-1 border border-gray-300 rounded-md focus:ring focus:ring-blue-500"
+        class="w-full mb-3 px-3 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-500"
         placeholder="Search notes..." />
 
-      <!-- Filter dropdown -->
+      <!-- Filter -->
       <select id="filter-notes"
-        class="mb-4 px-2 py-1 border border-gray-300 rounded-md focus:ring focus:ring-blue-500">
+        class="mb-4 px-3 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-500">
         <option value="newest">Newest first</option>
         <option value="oldest">Oldest first</option>
         <option value="starred">Starred only</option>
@@ -34,32 +35,11 @@
       </select>
 
       <!-- Notes list -->
-      <ul id="notes-list" class="flex-1 overflow-y-auto space-y-2">
-        <% notes.forEach(note => { %>
-        <li class="p-2 bg-gray-100 rounded-md flex justify-between items-center cursor-pointer hover:bg-gray-200"
-          data-id="<%= note._id %>">
-          <span class="note-title"><%= note.title %></span>
-          <div class="flex items-center space-x-2">
-            <!-- star rating -->
-            <div class="flex space-x-1" data-action="star" data-id="<%= note._id %>">
-              <% for (let i = 1; i <= 5; i++) { %>
-                <span class="star <%= i <= note.stars ? 'text-yellow-500' : 'text-gray-300' %> cursor-pointer"
-                  data-star="<%= i %>">★</span>
-              <% } %>
-            </div>
-            <!-- edit -->
-            <button class="text-blue-600 hover:text-blue-700" data-id="<%= note._id %>"
-              data-action="edit">✎</button>
-            <!-- delete -->
-            <button class="text-red-600 hover:text-red-700" data-id="<%= note._id %>"
-              data-action="delete">🗑</button>
-          </div>
-        </li>
-        <% }) %>
-      </ul>
+      <ul id="notes-list" class="flex-1 overflow-y-auto space-y-2"></ul>
 
-      <!-- Add new note -->
-      <button id="new-note-btn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+      <!-- Add button -->
+      <button id="new-note-btn"
+        class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
         + Add Note
       </button>
     </aside>
@@ -67,16 +47,18 @@
     <!-- Note Editor -->
     <section class="flex-1 bg-white p-6 rounded-md shadow-xl flex flex-col">
       <input type="text" id="note-title" placeholder="Note Title"
-        class="border-b border-gray-300 text-xl font-semibold mb-4 focus:outline-none focus:border-blue-500 p-1">
+        class="border-b border-gray-300 text-lg md:text-xl font-semibold mb-4 focus:outline-none focus:border-blue-500 p-1">
 
       <textarea id="note-content" placeholder="Write your note..."
         class="flex-1 resize-none p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
 
-      <div class="mt-4 flex justify-end space-x-2">
-        <button id="delete-note-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Delete</button>
+      <div class="mt-4 flex flex-col md:flex-row justify-end gap-2">
+        <button id="delete-note-btn"
+          class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Delete</button>
         <button id="update-note-btn"
           class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Update</button>
-        <button id="save-note-btn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Save</button>
+        <button id="save-note-btn"
+          class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Save</button>
       </div>
     </section>
   </main>
@@ -84,125 +66,10 @@
   <%- include('partials/footer') %>
 
   <script>
-    let currentNoteId = null;
-
-    // Helper: Fetch notes with filters
-    async function fetchNotes(params = {}) {
-      const query = new URLSearchParams(params).toString();
-      const res = await fetch(`/posts?${query}`);
-      return res.json();
-    }
-
-    // Render notes into sidebar
-    function renderNotes(notes) {
-      const list = document.getElementById('notes-list');
-      list.innerHTML = '';
-      notes.forEach(note => {
-        let starsHtml = '';
-        for (let i = 1; i <= 5; i++) {
-          starsHtml += `<span class="star ${i <= note.stars ? 'text-yellow-500' : 'text-gray-300'} cursor-pointer" data-star="${i}">★</span>`;
-        }
-
-        list.innerHTML += `
-          <li class="p-2 bg-gray-100 rounded-md flex justify-between items-center cursor-pointer hover:bg-gray-200" data-id="${note._id}">
-            <span class="note-title">${note.title}</span>
-            <div class="flex items-center space-x-2">
-              <div class="flex space-x-1" data-action="star" data-id="${note._id}">${starsHtml}</div>
-              <button class="text-blue-600 hover:text-blue-700" data-id="${note._id}" data-action="edit">✎</button>
-              <button class="text-red-600 hover:text-red-700" data-id="${note._id}" data-action="delete">🗑</button>
-            </div>
-          </li>`;
-      });
-    }
-
-    // Save new note
-    document.getElementById('save-note-btn').addEventListener('click', async () => {
-      const title = document.getElementById('note-title').value;
-      const content = document.getElementById('note-content').value;
-      if (!title || !content) return alert('Please fill both fields');
-
-      const res = await fetch('/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content })
-      });
-      if (res.ok) location.reload();
-    });
-
-    // Update note
-    document.getElementById('update-note-btn').addEventListener('click', async () => {
-      if (!currentNoteId) return alert('Select a note first');
-      const title = document.getElementById('note-title').value;
-      const content = document.getElementById('note-content').value;
-
-      const res = await fetch(`/posts/${currentNoteId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content })
-      });
-      if (res.ok) location.reload();
-    });
-
-    // Delete note
-    document.getElementById('delete-note-btn').addEventListener('click', async () => {
-      if (!currentNoteId) return alert('Select a note first');
-      const res = await fetch(`/posts/${currentNoteId}`, { method: 'DELETE' });
-      if (res.ok) location.reload();
-    });
-
-    // Filter dropdown
-    document.getElementById('filter-notes').addEventListener('change', async (e) => {
-      const filter = e.target.value;
-      const notes = await fetchNotes({ filter });
-      renderNotes(notes);
-    });
-
-    // Search
-    document.getElementById('search-notes').addEventListener('input', async (e) => {
-      const q = e.target.value;
-      const notes = await fetch(`/posts/search?q=${encodeURIComponent(q)}`).then(r => r.json());
-      renderNotes(notes);
-    });
-
-    // Add new note
-    document.getElementById('new-note-btn').addEventListener('click', () => {
-      currentNoteId = null;
-      document.getElementById('note-title').value = '';
-      document.getElementById('note-content').value = '';
-    });
-
-    // Delegated event handling for Edit / Star / Delete
-    document.getElementById('notes-list').addEventListener('click', async (e) => {
-      const action = e.target.dataset.action;
-      const id = e.target.dataset.id;
-
-      // Edit note
-      if (action === 'edit') {
-        const note = await fetch(`/posts/${id}`).then(r => r.json());
-        currentNoteId = id;
-        document.getElementById('note-title').value = note.title;
-        document.getElementById('note-content').value = note.content;
-      }
-
-      // Delete note
-      if (action === 'delete') {
-        const res = await fetch(`/posts/${id}`, { method: 'DELETE' });
-        if (res.ok) location.reload();
-      }
-
-      // Star rating
-      if (e.target.classList.contains('star')) {
-        const parent = e.target.closest('[data-action="star"]');
-        const noteId = parent.dataset.id;
-        const stars = parseInt(e.target.dataset.star);
-
-        await fetch(`/posts/${noteId}/star`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ stars })
-        });
-        location.reload();
-      }
+    // Toggle sidebar on mobile
+    document.getElementById('mobile-toggle')?.addEventListener('click', () => {
+      const sb = document.getElementById('sidebar');
+      sb.classList.toggle('hidden');
     });
   </script>
 </body>
