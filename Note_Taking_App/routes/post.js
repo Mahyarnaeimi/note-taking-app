@@ -6,12 +6,26 @@ import { ensureAuth } from '../middlewares/auth.js';
 
 const router = Router();
 
-// Get all notes (برای یوزر لاگین‌شده)
+// Get all notes with optional filters
 router.get(
   '/',
   ensureAuth,
   asyncHandler(async (req, res) => {
-    const notes = await Note.find({ owner: req.user._id }).sort({ createdAt: -1 });
+    const { filter } = req.query;
+    let query = { owner: req.user._id };
+    let sort = { createdAt: -1 }; // default: newest first
+
+    if (filter === 'oldest') {
+      sort = { createdAt: 1 }; // oldest first
+    } else if (filter === 'starred') {
+      query.stars = { $gt: 0 }; // only starred notes
+      sort = { stars: -1, createdAt: -1 }; // sort by stars, then newest
+    } else if (filter === 'unstarred') {
+      query.stars = 0; // only unstarred
+      sort = { createdAt: -1 }; // newest first
+    }
+
+    const notes = await Note.find(query).sort(sort);
     res.json(notes);
   })
 );
@@ -23,6 +37,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const q = req.query.q || '';
     const regex = new RegExp(q, 'i'); // case-insensitive
+
     const notes = await Note.find({
       owner: req.user._id,
       $or: [{ title: regex }, { content: regex }]
@@ -110,31 +125,5 @@ router.post(
     res.json(note);
   })
 );
-
-
-// Get all notes with optional filters
-router.get(
-  '/',
-  ensureAuth,
-  asyncHandler(async (req, res) => {
-    const { filter } = req.query;
-    let query = { owner: req.user._id };
-    let sort = { createdAt: -1 }; // پیش‌فرض: جدیدترین اول
-
-    if (filter === 'oldest') {
-      sort = { createdAt: 1 }; // قدیمی‌ترین اول
-    } else if (filter === 'starred') {
-      query.stars = { $gt: 0 }; // فقط ستاره‌دارها
-      sort = { stars: -1, createdAt: -1 }; // مرتب بر اساس تعداد ستاره، بعد تاریخ
-    } else if (filter === 'unstarred') {
-      query.stars = 0; // فقط بدون ستاره
-      sort = { createdAt: -1 }; // مرتب بر اساس تاریخ (جدیدترین اول)
-    }
-
-    const notes = await Note.find(query).sort(sort);
-    res.json(notes);
-  })
-);
-
 
 export default router;

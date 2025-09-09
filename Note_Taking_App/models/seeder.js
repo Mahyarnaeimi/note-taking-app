@@ -16,6 +16,7 @@ const seed = async () => {
     // delete existing data
     await Note.deleteMany();
     await User.deleteMany();
+    console.log('Old data removed');
 
     // create test user
 
@@ -30,18 +31,38 @@ const seed = async () => {
 
 
     // create multiple notes
-    const notes = await Note.insertMany([{
-        title: 'First Note',
-        content: 'This is my first note.',
-        owner: user._id
+    const notes = await Note.insertMany([ {
+        title: 'First Starred Note',
+        content: 'This is a note with 5 stars',
+        stars: 5,
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5), // 5 روز قبل
+        owner: user._id,
       },
       {
         title: 'Second Note',
-        content: 'This is my second note.',
-        owner: user._id
+        content: 'This note has no stars',
+        stars: 0,
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), // 3 روز قبل
+        owner: user._id,
+      },
+      {
+        title: 'Another Starred Note',
+        content: 'This one has 3 stars',
+        stars: 3,
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), // 2 روز قبل
+        owner: user._id,
+      },
+      {
+        title: 'Newest Note',
+        content: 'Latest note without stars',
+        stars: 0,
+        createdAt: new Date(), // همین الان
+        owner: user._id,
       },
     ]);
 
+    await Note.insertMany(notes);
+    
     console.log('🌱 Seeding done!');
     console.log({
       user,
