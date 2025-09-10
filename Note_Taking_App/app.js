@@ -68,7 +68,12 @@ app.get('/', (req, res) => {
 app.get('/dashboard', ensureAuth, async (req, res, next) => {
   try {
     const notes = await Note.find({ owner: req.user._id }).sort({ stars: -1, createdAt: -1 });
-    res.render('dashboard', { user: req.user, notes });
+
+    res.render('dashboard', { 
+      user: req.user, 
+      notes,
+      page: 'dashboard'   // 🔹 این خط اضافه شد
+    });
   } catch (err) {
     next(err); // بره توی errorHandler
   }

@@ -8,16 +8,20 @@
   <!-- Right side -->
   <% if (user) { %>
     <div class="flex items-center space-x-2">
-      <!-- Mobile hamburger -->
-      <button id="mobile-toggle" class="md:hidden inline-flex items-center justify-center p-2 rounded-md bg-white text-blue-700">
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button>
+      <% if (page === 'dashboard') { %>
+        <!-- فقط در داشبورد و فقط موبایل -->
+        <button id="mobile-toggle"
+          class="md:hidden inline-flex items-center justify-center p-2 rounded-md bg-white text-blue-700">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      <% } %>
 
-      <!-- Logout only for desktop -->
-      <a href="/auth/logout" class="hidden md:inline-block bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-gray-200">
+      <!-- Logout فقط در دسکتاپ -->
+      <a href="/auth/logout"
+        class="hidden md:inline-block bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-gray-200">
         Logout
       </a>
     </div>
