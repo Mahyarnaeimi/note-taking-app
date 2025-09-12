@@ -1,37 +1,34 @@
-// seed.js
-
+// seeder.js
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Note from './note.js';
-import User from './user.js';
-import bcrypt from 'bcryptjs';
+import Note from './models/note.js';
+import User from './models/user.js';
 
 dotenv.config();
 
 const seed = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log('✅ MongoDB connected');
 
-    // delete existing data
-    await Note.deleteMany();
-    await User.deleteMany();
-    console.log('Old data removed');
+    console.log('Connected to MongoDB ✅');
 
-    // create test user
+    // پاک کردن داده‌های قبلی
+    await Note.deleteMany({});
+    console.log('Old notes removed');
 
+    // یک کاربر نمونه
+    let user = await User.findOne({ email: 'test@example.com' });
+    if (!user) {
+      user = await User.create({
+        email: 'test@example.com',
+        password: 'password123', // دقت کن bcrypt در مدل پسورد رو هش کنه
+        displayName: 'Seed User',
+      });
+    }
 
-    // create test user
-    const hash = await bcrypt.hash('123456', 12);
-    const user = await User.create({
-      email: 'test@example.com',
-      password: hash,
-      displayName: 'Test User'
-    });
-
-
-    // create multiple notes
-    const notes = await Note.insertMany([ {
+    // نت‌های نمونه
+    const notes = [
+      {
         title: 'First Starred Note',
         content: 'This is a note with 5 stars',
         stars: 5,
@@ -59,19 +56,14 @@ const seed = async () => {
         createdAt: new Date(), // همین الان
         owner: user._id,
       },
-    ]);
+    ];
 
     await Note.insertMany(notes);
-    
-    console.log('🌱 Seeding done!');
-    console.log({
-      user,
-      notes
-    });
+    console.log('Seed data inserted ✅');
 
-    process.exit(0);
-  } catch (err) {
-    console.error(err);
+    process.exit();
+  } catch (error) {
+    console.error(error);
     process.exit(1);
   }
 };
