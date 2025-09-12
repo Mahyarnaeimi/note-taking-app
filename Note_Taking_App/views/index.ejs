@@ -11,7 +11,7 @@
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
-  <%- include('partials/header', { user }) %>
+  <%- include('partials/header', { user, page: 'index' }) %>
   <div class="flex justify-center bg-gray-100 pt-24 pb-12">
     <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md mt-24">
       <% if (error) { %>
