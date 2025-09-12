@@ -1,7 +1,9 @@
+// Passport configuration for Google OAuth 2.0
+
+
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/user.js';
 
-// Passport configuration for Google OAuth2
 export default function(passport) {
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -24,7 +26,6 @@ export default function(passport) {
     }
   }));
 
-  // Serialize and deserialize user instances to and from the session
   passport.serializeUser((user, done) => done(null, user.id));
   passport.deserializeUser(async (id, done) => {
     try {

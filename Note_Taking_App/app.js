@@ -1,5 +1,3 @@
-// app.js
-
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -9,13 +7,13 @@ import passport from 'passport';
 import MongoStore from 'connect-mongo';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
 import postsRouter from './routes/post.js';
 import authRouter from './routes/auth.js';
 import configurePassport from './config/passport.js';
 import { notFound, errorHandler } from './middlewares/error.js';
 import { ensureAuth } from './middlewares/auth.js';
 import Note from './models/note.js';
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
