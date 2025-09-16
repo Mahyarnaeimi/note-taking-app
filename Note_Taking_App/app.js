@@ -1,5 +1,6 @@
+// app.js
+
 import express from 'express';
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import session from 'express-session';
@@ -21,6 +22,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express();
+
 
 // middleware
 app.use(morgan('dev'));
@@ -70,10 +72,10 @@ app.get('/dashboard', ensureAuth, async (req, res, next) => {
     res.render('dashboard', { 
       user: req.user, 
       notes,
-      page: 'dashboard'   // 🔹 این خط اضافه شد
+      page: 'dashboard'   
     });
   } catch (err) {
-    next(err); // بره توی errorHandler
+    next(err); 
   }
 });
 
@@ -81,15 +83,6 @@ app.get('/dashboard', ensureAuth, async (req, res, next) => {
 app.use(notFound);
 app.use(errorHandler);
 
-// DB connect & server start
-const PORT = process.env.PORT || 5000;
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log('✅ MongoDB connected');
-    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
-  })
-  .catch((err) => console.error(err));
+export default app; 
+
+
