@@ -9,7 +9,7 @@
   <% if (user) { %>
     <div class="flex items-center space-x-2">
       <% if (page === 'dashboard') { %>
-        <!-- فقط در داشبورد و فقط موبایل -->
+        <!-- Mobile menu button -->
         <button id="mobile-toggle"
           class="md:hidden inline-flex items-center justify-center p-2 rounded-md bg-white text-blue-700">
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,7 +19,7 @@
         </button>
       <% } %>
 
-      <!-- Logout فقط در دسکتاپ -->
+      <!-- Logout button (desktop only) -->
       <a href="/auth/logout"
         class="hidden md:inline-block bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-gray-200">
         Logout

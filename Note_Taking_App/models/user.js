@@ -1,4 +1,3 @@
-// Note_Taking_App/models/user.js
 // User model definition
 
 import mongoose from "mongoose";

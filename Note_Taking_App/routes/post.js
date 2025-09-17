@@ -1,4 +1,5 @@
 // routes/post.js
+
 import { Router } from 'express';
 import { getPosts, getSearch, postNote, getNote, putNote, delNote, postStar } from '../controllers/postController.js';
 import { ensureAuth } from '../middlewares/auth.js';

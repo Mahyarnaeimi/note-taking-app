@@ -5,11 +5,11 @@ export const ensureAuth = (req, res, next) => {
     return next();
   }
 
-  // اگر درخواست HTML باشه → redirect
+  // if HTML request → redirect
   if (req.accepts('html')) {
     return res.redirect('/?error=Please login first');
   }
 
-  // اگر API (JSON) باشه → status code
+  // if API (JSON) request → status code
   res.status(401).json({ message: 'Unauthorized' });
 };
