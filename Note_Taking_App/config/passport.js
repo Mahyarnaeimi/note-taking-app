@@ -1,6 +1,5 @@
 // Passport configuration for Google OAuth 2.0
 
-
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/user.js';
 
