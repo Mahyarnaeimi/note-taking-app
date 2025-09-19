@@ -1,0 +1,217 @@
+📒 Note-Taking App 
+Midterm assignment by Mahyar Naeimi
+A full-stack Note-Taking App built with Node.js, Express, MongoDB, and EJS.
+This project demonstrates understanding of server-side JavaScript, RESTful API creation, authentication (local & Google OAuth), and integration with a front-end interface.
+
+🚀 Features
+User authentication:
+
+
+Local login & registration (email + password)
+
+
+Google OAuth 2.0 login with Passport
+
+
+CRUD operations for notes:
+
+
+Create, read, update, and delete personal notes
+
+
+Notes are private to each logged-in user
+
+
+Authentication & session handling with express-session and MongoDB store
+
+
+Passwords are securely hashed with bcryptjs
+
+
+Server-side validation and error handling
+
+
+Simple EJS + TailwindCSS front-end for login, registration, and note management
+
+
+RESTful API endpoints for note management
+
+
+
+
+
+
+🗂️ Project Structure
+Note_Taking_App/
+│
+├── config/
+│   └── passport.js        # Google OAuth + Passport config
+│
+├── middlewares/
+│   ├── asyncHandler.js    # Async error handling
+│   ├── auth.js            # Authentication middleware
+│   └── error.js           # Global error handlers
+│
+├── models/
+│   ├── note.js            # Note schema
+│   └── user.js            # User schema
+│
+├── routes/
+│   ├── auth.js            # Auth routes (login, register, Google OAuth)
+│   └── post.js            # Notes CRUD routes
+│
+├── views/
+│   ├── index.ejs          # Login page
+│   ├── register.ejs       # Register page
+│   ├── forgot-password.ejs# Forgot password page
+│   └── ...                # Shared layouts
+│
+├── public/                # Static assets (CSS, images, favicon)
+│
+├── seed.js                # DB seeder (test user + notes)
+├── app.js                 # Main Express server
+├── package.json
+└── README.md
+
+
+
+⚙️ Installation & Setup
+1. Clone the repository
+git clone https://github.com/Mahyarnaeimi/Note-taking-app
+cd note-taking-app
+
+2. Install dependencies
+npm install nodemon
+
+3. Create .env file
+PORT=3500
+MONGO_URI=mongodb://localhost:27017/note_taker
+SESSION_SECRET=your-secret-key
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_CALLBACK_URL=http://localhost:3500/auth/google/callback
+
+4. Seed the database (optional)
+Creates a test user and sample notes.
+npm run seed
+
+5. Run the server
+npm run dev
+
+Server will be running at:
+ 👉 http://localhost:3500
+
+
+🔑 Authentication
+Local Login/Register
+
+
+/auth/register → register with email & password
+
+
+/auth/login → login with email & password
+
+
+Google Login
+
+
+/auth/google → login with Google account
+
+
+Session & Logout
+
+
+Sessions stored in MongoDB via connect-mongo
+
+
+/auth/logout → logout user
+
+
+
+📌 API Endpoints
+All note routes require authentication (ensureAuth middleware).
+Method
+Endpoint
+Description
+GET
+/posts/
+Get all notes (for user)
+POST
+/posts/
+Create a new note
+GET
+/posts/:id
+Get a single note by ID
+PUT
+/posts/:id
+Update a note (owner only)
+DELETE
+/posts/:id
+Delete a note (owner only)
+
+
+
+🔒 Validation & Error Handling
+Invalid login credentials redirect with error message
+
+
+Unauthorized access → 401 Unauthorized
+
+
+Accessing another user’s note → 403 Forbidden
+
+
+Non-existing routes → custom 404.html
+
+
+
+🖼️ Front-End (EJS + TailwindCSS)
+index.ejs → login form & error handling
+
+
+register.ejs → register new user
+
+
+forgot-password.ejs → password reset request
+
+
+TailwindCSS used for responsive design
+
+
+
+👨‍💻 Technologies Used
+Node.js + Express – server & routing
+
+
+MongoDB + Mongoose – database & models
+
+
+Passport.js – authentication (local + Google OAuth 2.0)
+
+
+express-session + connect-mongo – session handling
+
+
+bcryptjs – password hashing
+
+
+EJS – templating engine
+
+
+TailwindCSS – UI styling
+
+
+morgan – request logging
+
+
+
+📘 Notes.
+
+
+Passwords should always be hashed before storing in DB.
+
+
+Use HTTPS + secure cookie flags in production.
+
+
+
