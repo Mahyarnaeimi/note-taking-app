@@ -10,7 +10,7 @@
     "test": "mocha"
   },
   "keywords": [],
-  "author": "Mahyar Naeimi",
+  "author": "Mahyar Nami",
   "license": "ISC",
   "type": "module",
   "dependencies": {

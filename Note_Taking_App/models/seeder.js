@@ -13,7 +13,7 @@ export const seedDB = async () => {
     // Check if a connection is already established
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGO_URI);
-      console.log('Connected to MongoDB ✅');
+      console.log('Connected to MongoDB');
     }
 
     // Delete previous data
@@ -61,7 +61,7 @@ export const seedDB = async () => {
     ];
 
     await Note.insertMany(notes);
-    console.log('Seed data inserted ✅');
+    console.log('Seed data inserted');
 
     // Return the created user for use in tests
     return user;

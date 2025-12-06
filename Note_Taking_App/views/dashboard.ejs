@@ -52,7 +52,7 @@
               data-action="edit">✎</button>
             <!-- delete -->
             <button class="text-red-600 hover:text-red-700" data-id="<%= note._id %>"
-              data-action="delete">🗑</button>
+              data-action="delete">Delete</button>
           </div>
         </li>
         <% }) %>
@@ -109,7 +109,7 @@
             <div class="flex items-center space-x-2">
               <div class="flex space-x-1" data-action="star" data-id="${note._id}">${starsHtml}</div>
               <button class="text-blue-600 hover:text-blue-700" data-id="${note._id}" data-action="edit">✎</button>
-              <button class="text-red-600 hover:text-red-700" data-id="${note._id}" data-action="delete">🗑</button>
+              <button class="text-red-600 hover:text-red-700" data-id="${note._id}" data-action="delete">Delete</button>
             </div>
           </li>`;
       });

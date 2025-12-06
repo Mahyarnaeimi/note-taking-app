@@ -1,9 +1,9 @@
-📒 Note-Taking App 
+Note-Taking App 
 Midterm assignment by Mahyar Naeimi
 A full-stack Note-Taking App built with Node.js, Express, MongoDB, and EJS.
 This project demonstrates understanding of server-side JavaScript, RESTful API creation, authentication (local & Google OAuth), and integration with a front-end interface.
 
-🚀 Features
+Features
 User authentication:
 
 
@@ -41,7 +41,7 @@ RESTful API endpoints for note management
 
 
 
-🗂️ Project Structure
+Project Structure
 Note_Taking_App/
 │
 ├── config/
@@ -75,7 +75,7 @@ Note_Taking_App/
 
 
 
-⚙️ Installation & Setup
+Installation & Setup
 1. Clone the repository
 git clone https://github.com/Mahyarnaeimi/Note-taking-app
 cd note-taking-app
@@ -99,10 +99,10 @@ npm run seed
 npm run dev
 
 Server will be running at:
- 👉 http://localhost:3500
+ http://localhost:3500
 
 
-🔑 Authentication
+Authentication
 Local Login/Register
 
 
@@ -128,7 +128,7 @@ Sessions stored in MongoDB via connect-mongo
 
 
 
-📌 API Endpoints
+API Endpoints
 All note routes require authentication (ensureAuth middleware).
 Method
 Endpoint
@@ -151,7 +151,7 @@ Delete a note (owner only)
 
 
 
-🔒 Validation & Error Handling
+Validation & Error Handling
 Invalid login credentials redirect with error message
 
 
@@ -165,7 +165,7 @@ Non-existing routes → custom 404.html
 
 
 
-🖼️ Front-End (EJS + TailwindCSS)
+Front-End (EJS + TailwindCSS)
 index.ejs → login form & error handling
 
 
@@ -179,7 +179,7 @@ TailwindCSS used for responsive design
 
 
 
-👨‍💻 Technologies Used
+Technologies Used
 Node.js + Express – server & routing
 
 
@@ -205,7 +205,7 @@ morgan – request logging
 
 
 
-📘 Notes.
+Notes.
 
 
 Passwords should always be hashed before storing in DB.
