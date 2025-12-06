@@ -6,33 +6,23 @@ This project demonstrates understanding of server-side JavaScript, RESTful API c
 Features
 User authentication:
 
-
 Local login & registration (email + password)
-
 
 Google OAuth 2.0 login with Passport
 
-
 CRUD operations for notes:
-
 
 Create, read, update, and delete personal notes
 
-
 Notes are private to each logged-in user
-
 
 Authentication & session handling with express-session and MongoDB store
 
-
 Passwords are securely hashed with bcryptjs
-
 
 Server-side validation and error handling
 
-
 Simple EJS + TailwindCSS front-end for login, registration, and note management
-
 
 RESTful API endpoints for note management
 
@@ -157,59 +147,39 @@ Invalid login credentials redirect with error message
 
 Unauthorized access → 401 Unauthorized
 
-
 Accessing another user’s note → 403 Forbidden
 
-
 Non-existing routes → custom 404.html
-
-
 
 Front-End (EJS + TailwindCSS)
 index.ejs → login form & error handling
 
-
 register.ejs → register new user
-
 
 forgot-password.ejs → password reset request
 
-
 TailwindCSS used for responsive design
-
-
 
 Technologies Used
 Node.js + Express – server & routing
 
-
 MongoDB + Mongoose – database & models
-
 
 Passport.js – authentication (local + Google OAuth 2.0)
 
-
 express-session + connect-mongo – session handling
-
 
 bcryptjs – password hashing
 
-
 EJS – templating engine
-
 
 TailwindCSS – UI styling
 
-
 morgan – request logging
-
-
 
 Notes.
 
-
 Passwords should always be hashed before storing in DB.
-
 
 Use HTTPS + secure cookie flags in production.
 
