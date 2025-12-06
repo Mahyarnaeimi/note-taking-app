@@ -3,8 +3,8 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/user.js';
 
-// POST '/login' ----> Local Login
-export const postLocLog = async (req, res, next) => {
+// POST '/login' - Local Login
+export const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email }).select('+password');
@@ -19,23 +19,23 @@ export const postLocLog = async (req, res, next) => {
 
     req.login(user, (err) => {
       if (err) return next(err);
-      return res.redirect('/dashboard'); // 👈 after login go to dashboard
+      return res.redirect('/dashboard');
     });
   } catch (err) {
     next(err);
   }
 };
 
-// GET '/register' ----> Register Page
-export const getReg = (req, res) => {
+// GET '/register' - Register Page
+export const getRegisterPage = (req, res) => {
   res.render('register', {
     error: req.query.error || null,
     user: req.user || null,
   });
 };
 
-// POST '/register' ----> Register Submit
-export const postReg = async (req, res, next) => {
+// POST '/register' - Register Submit
+export const registerUser = async (req, res, next) => {
   const { email, password, displayName } = req.body;
   try {
     // check if user already exists
@@ -56,8 +56,8 @@ export const postReg = async (req, res, next) => {
   }
 };
 
-// GET '/forgot-password' ----> Forgot Password Page
-export const getForPass = (req, res) => {
+// GET '/forgot-password' - Forgot Password Page
+export const getForgotPasswordPage = (req, res) => {
   res.render('forgot-password', {
     error: req.query.error || null,
     message: null,
@@ -65,8 +65,8 @@ export const getForPass = (req, res) => {
   });
 };
 
-// POST '/forgot-password' ----> Forgot Password Submit
-export const postForPass = async (req, res, next) => {
+// POST '/forgot-password' - Forgot Password Submit
+export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
@@ -87,8 +87,8 @@ export const postForPass = async (req, res, next) => {
   }
 };
 
-// GET '/logout' ----> Logout
-export const getLogout = (req, res, next) => {
+// GET '/logout' - Logout
+export const logoutUser = (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
     res.redirect('/');

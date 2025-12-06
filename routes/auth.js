@@ -3,30 +3,30 @@
 import { Router } from 'express';
 import passport from 'passport';
 import {
-  postLocLog,
-  getReg,
-  postReg,
-  getForPass,
-  postForPass,
-  getLogout,
+  loginUser,
+  getRegisterPage,
+  registerUser,
+  getForgotPasswordPage,
+  forgotPassword,
+  logoutUser,
 } from '../controllers/authController.js';
 
 const router = Router();
 
 // Local Login
-router.post('/login', postLocLog);
+router.post('/login', loginUser);
 
 // Register Page
-router.get('/register', getReg);
+router.get('/register', getRegisterPage);
 
 // Register Submit
-router.post('/register', postReg);
+router.post('/register', registerUser);
 
 // Forgot Password Page
-router.get('/forgot-password', getForPass);
+router.get('/forgot-password', getForgotPasswordPage);
 
 // Forgot Password Submit
-router.post('/forgot-password', postForPass);
+router.post('/forgot-password', forgotPassword);
 
 // Google OAuth Routes -- not in controller
 router.get(
@@ -44,6 +44,6 @@ router.get(
 );
 
 // Logout
-router.get('/logout', getLogout);
+router.get('/logout', logoutUser);
 
 export default router;
